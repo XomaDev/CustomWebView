@@ -64,7 +64,7 @@ public final class CustomWebView extends AndroidNonvisibleComponent implements W
     public boolean deepLinks = false;
     public String jobName = "";
     public boolean isLoading = false;
-    public HashMap<Integer, WView> wv = new HashMap<>();
+    public CustomHashMap wv;
     public boolean blockAds = false;
     public static List<String> AD_HOSTS = new ArrayList<>();
     public int iD = 0;
@@ -80,6 +80,8 @@ public final class CustomWebView extends AndroidNonvisibleComponent implements W
 
     public CustomWebView(ComponentContainer container) {
         super(container.$form());
+
+        wv = new CustomHashMap(container);
         activity = container.$context();
         context = activity;
         wvInterface = new WebViewInterface();
@@ -169,7 +171,7 @@ public final class CustomWebView extends AndroidNonvisibleComponent implements W
         web.setDownloadListener(new DownloadListener() {
             @Override
             public void onDownloadStart(String s, String s1, String s2, String s3, long l) {
-                    OnDownloadNeeded(getIndex(web), s, s2, s3, l);
+                OnDownloadNeeded(getIndex(web), s, s2, s3, l);
             }
         });
         web.setFindListener(new WebView.FindListener() {
