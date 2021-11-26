@@ -99,6 +99,10 @@ public final class CustomWebView extends AndroidNonvisibleComponent implements W
         return Math.round(p * deviceDensity);
     }
 
+    public String emptyIfNull(Object obj) {
+        return (obj == null) ? "" : obj.toString();
+    }
+
     @SimpleFunction(description = "Creates the webview in given arrangement with id")
     public void CreateWebView(HVArrangement container, final int id) {
         if (!(wv.containsKey(id) && container == null)) {
@@ -249,13 +253,10 @@ public final class CustomWebView extends AndroidNonvisibleComponent implements W
 
     @SimpleFunction(description = "Sets the visibility of webview by id")
     public void SetVisibility(int id, boolean visibility) {
-        if (wv.containsKey(id)) {
-            if (visibility) {
-                wv.get(id).setVisibility(View.VISIBLE);
-            } else {
-                wv.get(id).setVisibility(View.GONE);
-            }
-        }
+        WView web = wv.get(id);
+        web.setVisibility(
+                visibility ? View.VISIBLE : View.GONE
+        );
     }
 
     @SimpleProperty(category = PropertyCategory.BEHAVIOR, description = "Get webview string")
@@ -320,12 +321,12 @@ public final class CustomWebView extends AndroidNonvisibleComponent implements W
 
     @SimpleProperty(description = "URL of the page currently viewed")
     public String CurrentUrl() {
-        return (webView.getUrl() == null) ? "" : webView.getUrl();
+        return emptyIfNull(webView.getUrl());
     }
 
     @SimpleProperty(description = "Title of the page currently viewed", category = PropertyCategory.BEHAVIOR)
     public String CurrentPageTitle() {
-        return (webView.getTitle() == null) ? "" : webView.getTitle();
+        return emptyIfNull(webView.getTitle());
     }
 
     @SimpleProperty(description = "Determines whether to follow links when they are tapped in the WebViewer." + "If you follow links, you can use GoBack and GoForward to navigate the browser history")
@@ -1626,10 +1627,9 @@ public final class CustomWebView extends AndroidNonvisibleComponent implements W
     @SimpleFunction(description = "Clears the form data of the webview <br> Added by Xoma")
     public void ClearFormData(final int id) {
         final WebView view = wv.get(id);
-        if (view != null) {
-            view.clearFormData();
-        }
+        view.clearFormData();
     }
+
     @SimpleEvent(description = "")
     public void Swiped(int id,int direction){
         EventDispatcher.dispatchEvent(this,"Swiped",id,direction);
@@ -1639,5 +1639,4 @@ public final class CustomWebView extends AndroidNonvisibleComponent implements W
     public void onSwipe(int i, int i1) {
         Swiped(i,i1);
     }
-
 }
