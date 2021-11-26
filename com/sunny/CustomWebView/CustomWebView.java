@@ -175,13 +175,13 @@ public final class CustomWebView extends AndroidNonvisibleComponent implements W
         web.setDownloadListener(new DownloadListener() {
             @Override
             public void onDownloadStart(String s, String s1, String s2, String s3, long l) {
-                OnDownloadNeeded(getIndex(web), s, s2, s3, l);
+                OnDownloadNeeded(getIdForView(web), s, s2, s3, l);
             }
         });
         web.setFindListener(new WebView.FindListener() {
             @Override
             public void onFindResultReceived(int i, int i1, boolean b) {
-                FindResultReceived(getIndex((web)), i, i1, b);
+                FindResultReceived(getIdForView((web)), i, i1, b);
             }
         });
         web.setOnTouchListener(new View.OnTouchListener() {
@@ -214,7 +214,7 @@ public final class CustomWebView extends AndroidNonvisibleComponent implements W
                         web.requestFocusNodeHref(message);
                         str = (String) message.getData().get("url");
                     }
-                    LongClicked(getIndex(web), item, str, type);
+                    LongClicked(getIdForView(web), item, str, type);
                     return webView.isLongClickable();
                 }
                 return false;
@@ -223,7 +223,7 @@ public final class CustomWebView extends AndroidNonvisibleComponent implements W
         web.setOnScrollChangeListener(new View.OnScrollChangeListener() {
             @Override
             public void onScrollChange(View view, int i, int i1, int i2, int i3) {
-                OnScrollChanged(getIndex(web), i, i1, i2, i3, web.canScrollHorizontally(-1), web.canScrollHorizontally(1));
+                OnScrollChanged(getIdForView(web), i, i1, i2, i3, web.canScrollHorizontally(-1), web.canScrollHorizontally(1));
             }
         });
         /* added in v11
@@ -992,7 +992,7 @@ public final class CustomWebView extends AndroidNonvisibleComponent implements W
             if (wv.get(CurrentId()) == view) {
                 if (isLoading) {
                     isLoading = false;
-                    PageLoaded(getIndex(view));
+                    PageLoaded(getIdForView(view));
                 }
             }
         }
@@ -1012,28 +1012,28 @@ public final class CustomWebView extends AndroidNonvisibleComponent implements W
         public void onFormResubmission(WebView view, Message dontResend, Message resend) {
             dontSend = dontResend;
             reSend = resend;
-            OnFormResubmission(getIndex(view));
+            OnFormResubmission(getIdForView(view));
         }
 
         @Override
         public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-            OnErrorReceived(getIndex(view), description, errorCode, failingUrl);
+            OnErrorReceived(getIdForView(view), description, errorCode, failingUrl);
         }
 
         @Override
         public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
-            OnErrorReceived(getIndex(view), errorResponse.getReasonPhrase(), errorResponse.getStatusCode(), request.getUrl().toString());
+            OnErrorReceived(getIdForView(view), errorResponse.getReasonPhrase(), errorResponse.getStatusCode(), request.getUrl().toString());
         }
 
         @Override
         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-            OnErrorReceived(getIndex(view), error.getDescription().toString(), error.getErrorCode(), request.getUrl().toString());
+            OnErrorReceived(getIdForView(view), error.getDescription().toString(), error.getErrorCode(), request.getUrl().toString());
         }
 
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             if (!isLoading) {
-                PageStarted(getIndex(view), url);
+                PageStarted(getIdForView(view), url);
                 isLoading = true;
             }
         }
@@ -1041,7 +1041,7 @@ public final class CustomWebView extends AndroidNonvisibleComponent implements W
         @Override
         public void onReceivedHttpAuthRequest(WebView view, HttpAuthHandler handler, String host, String realm) {
             httpAuthHandler = handler;
-            OnReceivedHttpAuthRequest(getIndex(view), host, realm);
+            OnReceivedHttpAuthRequest(getIdForView(view), host, realm);
         }
     }
 
@@ -1159,7 +1159,7 @@ public final class CustomWebView extends AndroidNonvisibleComponent implements W
         @Override
         public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
             mFilePathCallback = filePathCallback;
-            FileUploadNeeded(getIndex(view), fileChooserParams.getAcceptTypes()[0], fileChooserParams.isCaptureEnabled());
+            FileUploadNeeded(getIdForView(view), fileChooserParams.getAcceptTypes()[0], fileChooserParams.isCaptureEnabled());
             return FileAccess();
         }
 
@@ -1167,19 +1167,19 @@ public final class CustomWebView extends AndroidNonvisibleComponent implements W
         public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
             if (SupportMultipleWindows()) {
                 resultObj = resultMsg;
-                OnNewWindowRequest(getIndex(view), isDialog, isUserGesture);
+                OnNewWindowRequest(getIdForView(view), isDialog, isUserGesture);
             }
             return SupportMultipleWindows();
         }
 
         @Override
         public void onCloseWindow(WebView window) {
-            OnCloseWindowRequest(getIndex(window));
+            OnCloseWindowRequest(getIdForView(window));
         }
 
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
-            OnProgressChanged(getIndex(view), newProgress);
+            OnProgressChanged(getIdForView(view), newProgress);
         }
 
         @Override
@@ -1203,13 +1203,13 @@ public final class CustomWebView extends AndroidNonvisibleComponent implements W
         @Override
         public boolean onJsPrompt(WebView view, String url, String message, String defaultValue, JsPromptResult result) {
             jsPromptResult = result;
-            OnJsPrompt(getIndex(view), url, message, defaultValue);
+            OnJsPrompt(getIdForView(view), url, message, defaultValue);
             return EnableJS();
         }
 
         @Override
         public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
-            OnJsAlert(getIndex(view), url, message);
+            OnJsAlert(getIdForView(view), url, message);
             jsAlert = result;
             return EnableJS();
         }
@@ -1217,14 +1217,16 @@ public final class CustomWebView extends AndroidNonvisibleComponent implements W
         @Override
         public boolean onJsConfirm(WebView view, String url, String message, JsResult result) {
             jsResult = result;
-            OnJsConfirm(getIndex(view), url, message);
+            OnJsConfirm(getIdForView(view), url, message);
             return EnableJS();
         }
     }
 
-    public int getIndex(WebView view) {
-        List<WView> w = new ArrayList<>(wv.values());
-        return new ArrayList<>(wv.keySet()).get(w.indexOf(view));
+    public int getIdForView(WebView view) {
+        for (int key : wv.keySet())
+            if (wv.get(key) == view)
+                return key;
+        throw new IllegalArgumentException();
     }
 
     @SimpleEvent(description = "Event raised when resubmission of form is needed")
@@ -1630,7 +1632,7 @@ public final class CustomWebView extends AndroidNonvisibleComponent implements W
         view.clearFormData();
     }
 
-    @SimpleEvent(description = "")
+    @SimpleEvent
     public void Swiped(int id,int direction){
         EventDispatcher.dispatchEvent(this,"Swiped",id,direction);
     }
